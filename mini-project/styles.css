@@ -1,0 +1,41 @@
+body {
+  font-family: Arial, sans-serif;
+  padding: 1rem;
+  line-height: 1.6;
+}
+
+header h1 {
+  text-align: center;
+}
+
+#task-form,
+.search-task {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  margin: 1rem 0;
+}
+
+.task-list ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.task {
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 1px solid #ccc;
+  padding: 0.5rem;
+}
+
+.task.completed {
+  text-decoration: line-through;
+  opacity: 0.6;
+}
+
+#back-to-top {
+  position: fixed;
+  bottom: 1rem;
+  right: 1rem;
+  display: none;
+}
