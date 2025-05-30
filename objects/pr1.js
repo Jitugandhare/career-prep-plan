@@ -20,15 +20,15 @@ console.log(obj.length)
 
 
 // alternative way
-
+function getLength(object) {
+    return Object.keys(object).length;
+}
 
 let object = {
     name: "jitu",
-    surname: "gandhare",
-    get length() {
-        return Object.keys(this).length;
-    }
+    surname: "gandhare"
 };
 
-console.log(object.length); 
+console.log(getLength(object)); // 2
+
 
