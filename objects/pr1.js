@@ -15,3 +15,20 @@ Object.defineProperty(o,"length",{
 
 console.log(obj.length)
 
+
+
+
+
+// alternative way
+
+
+let object = {
+    name: "jitu",
+    surname: "gandhare",
+    get length() {
+        return Object.keys(this).length;
+    }
+};
+
+console.log(object.length); 
+
