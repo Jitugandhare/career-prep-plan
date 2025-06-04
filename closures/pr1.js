@@ -1,4 +1,5 @@
-/* In javascript when a function preserve some values it creates a closure.
+/* 
+In javascript when a function preserve some values it creates a closure.
 
 There are three main things in a closure:
 
