@@ -1,11 +1,138 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Blog Post Layout</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Blog Layout</title>
+    <style>
+        header,
+        nav,
+        main,
+        article,
+        section,
+        aside,
+        footer {
+            padding: 20px;
+            margin: auto;
+            max-width: 800px;
+        }
+
+        header {
+            background: #333;
+            color: #fff;
+        }
+
+        nav {
+            background: #eee;
+            margin-top: 0;
+        }
+
+        nav a {
+            margin-right: 15px;
+            text-decoration: none;
+            color: #333;
+        }
+
+        article {
+            background: #fff;
+            margin-top: 20px;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        figure {
+            margin: 20px 0;
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+        }
+
+        footer {
+            text-align: center;
+            background: #333;
+            color: #fff;
+            padding: 10px 20px;
+            margin-top: 40px;
+        }
+
+        .author {
+            font-style: italic;
+            color: #666;
+        }
+
+        aside {
+            background: #f1f1f1;
+            padding: 15px;
+            margin-top: 30px;
+        }
+    </style>
 </head>
+
 <body>
-    
+
+    <header>
+        <h1>My Blog</h1>
+
+    </header>
+
+    <nav>
+        <a href="#">Home</a>
+        <a href="#">Tutorials</a>
+        <a href="#">Blog</a>
+        <a href="#">About</a>
+        <a href="#">Contact</a>
+    </nav>
+
+    <main>
+        <article>
+            <header>
+                <h2>How to Create a Blog Layout with Semantic HTML</h2>
+            </header>
+
+            <figure>
+                <img src="https://via.placeholder.com/800x300" alt="Laptop and code on a desk">
+                <figcaption>Building a clean and accessible blog layout with semantic HTML.</figcaption>
+            </figure>
+
+            <section>
+                <h3>Why Use Semantic HTML?</h3>
+                <p>Semantic HTML helps search engines understand the structure and content of your pages. Tags like
+                    <code>&lt;article&gt;</code>, <code>&lt;section&gt;</code>, and <code>&lt;aside&gt;</code> improve
+                    accessibility and SEO by clearly defining different parts of the document.
+                </p>
+            </section>
+
+            <section>
+                <h3>Structuring the Layout</h3>
+                <p>A well-structured blog layout typically includes a header, navigation, main content area, sidebar
+                    (optional), and footer. Each of these should be wrapped in appropriate semantic tags.</p>
+            </section>
+
+            <section>
+                <h3>Conclusion</h3>
+                <p>Using semantic HTML not only makes your code cleaner but also helps with SEO and accessibility. It's
+                    a fundamental skill for modern web development.</p>
+            </section>
+        </article>
+
+        <aside>
+            <h3>Related Posts</h3>
+            <ul>
+                <li><a href="#">10 HTML Tags Every Developer Should Know</a></li>
+                <li><a href="#">SEO Best Practices for Web Developers</a></li>
+                <li><a href="#">Building Responsive Layouts with Flexbox</a></li>
+            </ul>
+        </aside>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 My Tech Blog. All rights reserved.</p>
+    </footer>
+
 </body>
+
 </html>
