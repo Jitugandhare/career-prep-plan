@@ -1,0 +1,14 @@
+{
+    "courses":[
+        {
+            "id":1,
+            "course":"nodejs",
+            "duration":30
+        },
+         {
+            "id":2,
+            "course":"Reactjs",
+            "duration":60
+        }
+    ]
+}
