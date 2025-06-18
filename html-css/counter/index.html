@@ -25,10 +25,11 @@
 </html>
 
 <script>
-    let count = 0;
+    let count = localStorage.getItem("count") ? Number(localStorage.getItem("count")) : 0;
 
     function updateDisplay() {
         document.getElementById("count").textContent = count;
+        localStorage.setItem("count", count)
         console.log(count)
     }
     function increment() {
