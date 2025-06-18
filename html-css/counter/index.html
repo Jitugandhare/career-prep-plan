@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>counter app</title>
+</head>
+
+<body>
+    <div
+        style="border: 1px solid black; display: flex; align-items: center; justify-content: center; flex-direction: column;">
+        <h1>Counter App</h1>
+        <p>Count: <span id="count">
+                0
+            </span></p>
+        <div style="margin-bottom: 10px;">
+            <button id="increment">+</button>
+            <button id="decrement">-</button>
+            <button id="reset">reset</button>
+        </div>
+    </div>
+</body>
+
+</html>
+
+<script>
+    let count = 0;
+
+    function updateDisplay() {
+        document.getElementById("count").textContent = count;
+        console.log(count)
+    }
+    function increment() {
+        count++
+        updateDisplay()
+    }
+    function decrement() {
+        count--
+        updateDisplay()
+    }
+    function reset() {
+        count = 0;
+        updateDisplay()
+    }
+
+    document.getElementById("increment").addEventListener("click", increment)
+    document.getElementById("decrement").addEventListener('click', decrement)
+    document.getElementById("reset").addEventListener("click", reset)
+
+    updateDisplay()
+</script>
