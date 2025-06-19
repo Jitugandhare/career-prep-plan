@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Navbar</title>
+    <style>
+        #navbar {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+            background-color: black;
+        }
+
+        #navbar-container {
+            max-width: 1200px;
+            max-width: 0, auto;
+            padding: 0, 1.5rem;
+            height: 4rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+        }
+
+        .navbar-logo a {
+            color: white;
+            text-decoration: none;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin: 15px;
+            padding: 10px;
+            transition: color 0.2s ease;
+        }
+
+        .nav-links {
+            flex: 1;
+            margin-left: 2rem;
+        }
+
+        .nav-links ul {
+            display: flex;
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            gap: 2.5rem;
+        }
+
+        .nav-links li {
+            color: white;
+            text-decoration: none;
+        }
+
+        .search-bar {
+            /* border: 2px solid yellow; */
+            display: flex;
+            /* height: 1rem; */
+            gap: 3px;
+        }
+    </style>
+</head>
+
+<body>
+    <nav id="navbar">
+        <div id="navbar-container">
+            <div class="navbar-logo">
+                <a href="'*">Logo</a>
+            </div>
+            <div class="nav-links">
+                <ul>
+                    <li>Home</li>
+                    <li>Products</li>
+                    <li>About us</li>
+                    <li>Contact us</li>
+                </ul>
+            </div>
+
+            <div class="search-bar">
+                <input type="text" placeholder="Search..."><button>🔍</button>
+
+            </div>
+        </div>
+
+    </nav>
+</body>
+
+</html>
