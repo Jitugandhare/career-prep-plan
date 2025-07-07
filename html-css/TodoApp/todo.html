@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Todo App</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#4F46E5',
+                        secondary: '#6B7280',
+                        accent: '#10B981',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .completed {
+            text-decoration: line-through;
+            opacity: 0.7;
+        }
+        .task:hover .task-actions {
+            opacity: 1;
+        }
+        .task-actions {
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <div class="container mx-auto max-w-md px-4 py-8">
+        <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+            <div class="bg-primary p-6 text-white">
+                <h1 class="text-2xl font-bold">Todo App</h1>
+                <p class="text-primary-200">Get things done, one task at a time</p>
+            </div>
+
+            <div class="p-6">
+                <form id="todo-form" class="mb-6">
+                    <div class="flex">
+                        <input 
+                            type="text" 
+                            id="todo-input" 
+                            placeholder="Add a new task..."
+                            class="flex-1 px-4 py-2 border border-gray-300 rounded-l-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                            autocomplete="off"
+                        >
+                        <button 
+                            type="submit"
+                            class="bg-primary hover:bg-primary-600 text-white px-4 py-2 rounded-r-lg focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+                        >
+                            Add
+                        </button>
+                    </div>
+                </form>
+
+                <div class="space-y-3" id="todo-list">
+                    <!-- Tasks will be added here dynamically -->
+                    <!-- <div class="text-center py-4 text-secondary" id="empty-state">
+                        <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/f82aab3e-28a5-45dc-9218-c05d7078fb44.png" alt="Empty todo list illustration showing a clipboard with checkboxes" class="mx-auto mb-4 rounded-lg">
+                        <p>Your todo list is empty. Add some tasks!</p>
+                    </div> -->
+                </div>
+            </div>
+
+            <div class="bg-gray-100 px-6 py-3 flex justify-between items-center">
+                <span id="task-count" class="text-secondary text-sm">0 tasks</span>
+                <button id="clear-all" class="text-secondary hover:text-red-500 text-sm">Clear All</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const todoForm = document.getElementById('todo-form');
+            const todoInput = document.getElementById('todo-input');
+            const todoList = document.getElementById('todo-list');
+            const emptyState = document.getElementById('empty-state');
+            const taskCount = document.getElementById('task-count');
+            const clearAllBtn = document.getElementById('clear-all');
+
+            // Load tasks from localStorage
+            loadTasks();
+
+            // Add new task
+            todoForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const taskText = todoInput.value.trim();
+                if (taskText) {
+                    addTask(taskText);
+                    todoInput.value = '';
+                    todoInput.focus();
+                }
+            });
+
+            // Clear all tasks
+            clearAllBtn.addEventListener('click', () => {
+                if (confirm('Are you sure you want to clear all tasks?')) {
+                    localStorage.removeItem('todos');
+                    todoList.innerHTML = '';
+                    emptyState.style.display = 'block';
+                    updateTaskCount(0);
+                }
+            });
+
+            // Add task to DOM
+            function addTask(text, isCompleted = false, id = Date.now()) {
+                emptyState.style.display = 'none';
+
+                const task = document.createElement('div');
+                task.className = `task bg-white rounded-lg p-3 flex items-center border ${isCompleted ? 'border-accent completed' : 'border-transparent'}`;
+                task.dataset.id = id;
+
+                task.innerHTML = `
+                    <div class="flex-1 flex items-center">
+                        <button class="toggle-complete w-6 h-6 rounded-full border border-secondary mr-3 flex items-center justify-center ${isCompleted ? 'bg-accent border-accent' : ''}">
+                            ${isCompleted ? '✓' : ''}
+                        </button>
+                        <span class="${isCompleted ? 'completed' : ''}">${text}</span>
+                    </div>
+                    <div class="task-actions flex">
+                        <button class="delete-task text-red-500 hover:text-red-700 ml-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" />
+                            </svg>
+                        </button>
+                    </div>
+                `;
+
+                todoList.appendChild(task);
+
+                // Save tasks to localStorage
+                saveTasks();
+
+                // Update task count
+                updateTaskCount(document.querySelectorAll('.task').length);
+
+                // Add event listeners to new task buttons
+                addTaskEventListeners(task);
+            }
+
+            // Add event listeners to task buttons
+            function addTaskEventListeners(task) {
+                const toggleCompleteBtn = task.querySelector('.toggle-complete');
+                const deleteBtn = task.querySelector('.delete-task');
+
+                toggleCompleteBtn.addEventListener('click', () => {
+                    task.classList.toggle('completed');
+                    const textSpan = task.querySelector('span');
+                    textSpan.classList.toggle('completed');
+                    
+                    if (task.classList.contains('completed')) {
+                        task.classList.remove('border-transparent');
+                        task.classList.add('border-accent');
+                        toggleCompleteBtn.classList.add('bg-accent', 'border-accent');
+                        toggleCompleteBtn.innerHTML = '✓';
+                    } else {
+                        task.classList.remove('border-accent');
+                        task.classList.add('border-transparent');
+                        toggleCompleteBtn.classList.remove('bg-accent', 'border-accent');
+                        toggleCompleteBtn.innerHTML = '';
+                    }
+
+                    saveTasks();
+                });
+
+                deleteBtn.addEventListener('click', () => {
+                    task.remove();
+                    saveTasks();
+                    updateTaskCount(document.querySelectorAll('.task').length);
+                    
+                    if (todoList.children.length === 0 || 
+                        (todoList.children.length === 1 && todoList.firstElementChild.id === 'empty-state')) {
+                        emptyState.style.display = 'block';
+                    }
+                });
+            }
+
+            // Save tasks to localStorage
+            function saveTasks() {
+                const tasks = [];
+                document.querySelectorAll('.task').forEach(task => {
+                    tasks.push({
+                        id: task.dataset.id,
+                        text: task.querySelector('span').textContent,
+                        completed: task.classList.contains('completed')
+                    });
+                });
+                localStorage.setItem('todos', JSON.stringify(tasks));
+            }
+
+            // Load tasks from localStorage
+            function loadTasks() {
+                const savedTasks = JSON.parse(localStorage.getItem('todos'));
+                if (savedTasks && savedTasks.length > 0) {
+                    emptyState.style.display = 'none';
+                    savedTasks.forEach(task => {
+                        addTask(task.text, task.completed, task.id);
+                    });
+                    updateTaskCount(savedTasks.length);
+                }
+            }
+
+            // Update task counter
+            function updateTaskCount(count) {
+                taskCount.textContent = `${count} ${count === 1 ? 'task' : 'tasks'}`;
+            }
+        });
+    </script>
+</body>
+</html>
+
