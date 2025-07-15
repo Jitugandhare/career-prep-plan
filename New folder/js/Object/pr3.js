@@ -35,3 +35,12 @@ function filterByScores(arr){
 
 console.log(`Filtered by score:`,filterByScores(students))
 
+// Create a new array that contains only the names of the students.
+
+function byNames(arr){
+    
+    let ans=arr.map(student=>student.name)
+    return ans
+}
+
+console.log(`By Names:`,byNames(students))
