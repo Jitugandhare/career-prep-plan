@@ -55,3 +55,14 @@ function addStudent(id,name,score){
 addStudent(7,"raj",550)
 
 
+// Update the score of a student by their id.
+function updateScoreById(id,newScore){
+    let student=students.find((i)=>i.id===id);
+    if(student){
+        student.score=newScore
+    }
+}
+
+
+updateScoreById(1,570);
+console.log(students)
