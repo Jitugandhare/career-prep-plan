@@ -25,4 +25,13 @@ function sortStudents(arr){
     return ans;
 }
 
-console.log(`Sort the array of students by their score in descending order:` ,sortStudents(students))
+console.log(`Sort the array of students by their score in descending order:` ,sortStudents(students));
+
+// Filter out students who scored above 400.
+
+function filterByScores(arr){
+    return arr.filter((i)=>i.score>400);
+}
+
+console.log(`Filtered by score:`,filterByScores(students))
+
