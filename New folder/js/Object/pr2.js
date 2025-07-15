@@ -10,16 +10,8 @@ const students = [
 //Write a function to find a student by their id from the array.
 
 function findById(id){
-    return students.map((i)=>{
-       
-            if(i.id===id){
-                return i
-            }else{
-                return null
-            }
-        
-    });
+    return students.find((i)=>i.id===id)
     
 }
 
-console.log(findById(1))
+console.log(findById(2))
