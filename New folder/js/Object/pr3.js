@@ -44,3 +44,14 @@ function byNames(arr){
 }
 
 console.log(`By Names:`,byNames(students))
+
+
+// Add a new student object to the array.
+
+function addStudent(id,name,score){
+    const newStudent={id,name,score}
+    students.push(newStudent)
+}
+addStudent(7,"raj",550)
+
+
