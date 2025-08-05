@@ -9,3 +9,4 @@ Array.prototype.myFilter=function(callback){
 
 const arr = [1, 2, 3, 4];
 const even = arr.myFilter(x => x % 2 === 0); 
+console.log(even)
