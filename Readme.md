@@ -24,3 +24,6 @@ How can you implement custom CORS logic for different domains?
 What are the security risks of misconfigured CORS?
 
 How would you debug a CORS issue in the browser?
+
+
+<!-- gemini api key -->
