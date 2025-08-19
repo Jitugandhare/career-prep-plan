@@ -17,7 +17,7 @@ async function webSearch(query) {
     const response = await axios.post("https://api.tavily.com/search", {
         api_key: TAVILY_API_KEY,
         query,
-        max_results: 5,
+        max_results: 50,
         search_depth: "basic"
     });
     return response.data.results.map(r => r.content).join(" ");
