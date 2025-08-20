@@ -43,3 +43,9 @@ export const payrollSlice = createSlice({
 
 export const { reset, setSalaryStructure, setSalarySlips, setCurrentSalarySlip, addSalarySlip, updateSalarySlip } = payrollSlice.actions
 export default payrollSlice.reducer
+
+
+
+
+
+

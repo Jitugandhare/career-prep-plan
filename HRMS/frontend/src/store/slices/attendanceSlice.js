@@ -39,3 +39,9 @@ export const attendanceSlice = createSlice({
 
 export const { reset, setAttendance, setCurrentAttendance, addAttendance, updateAttendance } = attendanceSlice.actions
 export default attendanceSlice.reducer
+
+
+
+
+
+

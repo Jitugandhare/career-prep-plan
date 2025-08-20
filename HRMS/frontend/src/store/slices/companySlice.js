@@ -152,3 +152,9 @@ export const companySlice = createSlice({
 
 export const { reset, clearError } = companySlice.actions
 export default companySlice.reducer
+
+
+
+
+
+

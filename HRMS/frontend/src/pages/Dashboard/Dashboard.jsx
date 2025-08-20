@@ -1,5 +1,7 @@
-import React, { useEffect } from 'react'
-import { useSelector, useDispatch } from 'react-redux'
+import React from 'react'
+import { useSelector } from 'react-redux'
+import { useQuery } from 'react-query'
+import { useNavigate } from 'react-router-dom'
 import styled from 'styled-components'
 import { 
   FiUsers, 
@@ -252,44 +254,27 @@ const EmptyState = styled.div`
   }
 `
 
+// Services (import inline to avoid circular deps)
+import authService from '../../services/authService'
+import companyService from '../../services/companyService'
+
 const Dashboard = () => {
+  const navigate = useNavigate()
   const { user } = useSelector((state) => state.auth)
   const { company } = useSelector((state) => state.company)
 
-  // Mock data - replace with actual API calls
+  // Dynamic totals
+  const usersQuery = useQuery(['dashboard', 'usersCount'], () => authService.getAllUsers({ page: 1, limit: 1 }).then(r => r.data))
+  const totalEmployees = usersQuery.data?.pagination?.totalItems ?? (usersQuery.data?.data?.length || 0)
+
+  const eventsQuery = useQuery(['dashboard', 'events'], () => companyService.getCompanyEvents().then(r => r.data))
+  const upcomingEvents = (eventsQuery.data?.data || []).slice(0, 5).map((e, idx) => ({ id: e._id || idx, title: e.title, time: new Date(e.startDate).toLocaleString(), type: e.type }))
+
   const stats = [
-    {
-      title: 'Total Employees',
-      value: '156',
-      change: '+12%',
-      trend: 'up',
-      icon: FiUsers,
-      color: 'primary'
-    },
-    {
-      title: 'Present Today',
-      value: '142',
-      change: '+5%',
-      trend: 'up',
-      icon: FiClock,
-      color: 'success'
-    },
-    {
-      title: 'On Leave',
-      value: '8',
-      change: '-2%',
-      trend: 'down',
-      icon: FiCalendar,
-      color: 'warning'
-    },
-    {
-      title: 'Total Payroll',
-      value: '$45.2K',
-      change: '+8%',
-      trend: 'up',
-      icon: FiDollarSign,
-      color: 'success'
-    }
+    { title: 'Total Employees', value: String(totalEmployees || 0), change: '', trend: 'up', icon: FiUsers, color: 'primary' },
+    { title: 'Present Today', value: '-', change: '', trend: 'up', icon: FiClock, color: 'success' },
+    { title: 'On Leave', value: '-', change: '', trend: 'down', icon: FiCalendar, color: 'warning' },
+    { title: 'Total Payroll', value: '-', change: '', trend: 'up', icon: FiDollarSign, color: 'success' }
   ]
 
   const recentActivities = [
@@ -323,26 +308,18 @@ const Dashboard = () => {
     }
   ]
 
-  const upcomingEvents = [
-    {
-      id: 1,
-      title: 'Team Meeting',
-      time: 'Today, 2:00 PM',
-      type: 'meeting'
-    },
-    {
-      id: 2,
-      title: 'Performance Review Deadline',
-      time: 'Tomorrow, 5:00 PM',
-      type: 'deadline'
-    },
-    {
-      id: 3,
-      title: 'Company Holiday',
-      time: 'Friday, All Day',
-      type: 'holiday'
-    }
-  ]
+  const quickActionStyle = {
+    padding: '1rem',
+    border: '1px solid var(--gray-200)',
+    borderRadius: 'var(--radius-lg)',
+    background: 'white',
+    cursor: 'pointer',
+    transition: 'all var(--transition-fast)',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    gap: '0.5rem'
+  }
 
   return (
     <DashboardContainer>
@@ -402,33 +379,11 @@ const Dashboard = () => {
               <h3>Quick Actions</h3>
             </CardHeader>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '1rem' }}>
-              <button style={{
-                padding: '1rem',
-                border: '1px solid var(--gray-200)',
-                borderRadius: 'var(--radius-lg)',
-                background: 'white',
-                cursor: 'pointer',
-                transition: 'all var(--transition-fast)',
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                gap: '0.5rem'
-              }}>
+              <button style={quickActionStyle} onClick={() => navigate('/attendance')}>
                 <FiClock style={{ fontSize: '1.5rem', color: 'var(--primary-500)' }} />
                 <span style={{ fontSize: '0.875rem', fontWeight: '500' }}>Clock In/Out</span>
               </button>
-              <button style={{
-                padding: '1rem',
-                border: '1px solid var(--gray-200)',
-                borderRadius: 'var(--radius-lg)',
-                background: 'white',
-                cursor: 'pointer',
-                transition: 'all var(--transition-fast)',
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                gap: '0.5rem'
-              }}>
+              <button style={quickActionStyle} onClick={() => navigate('/leave')}>
                 <FiCalendar style={{ fontSize: '1.5rem', color: 'var(--success-500)' }} />
                 <span style={{ fontSize: '0.875rem', fontWeight: '500' }}>Request Leave</span>
               </button>
@@ -483,3 +438,9 @@ const Dashboard = () => {
 }
 
 export default Dashboard
+
+
+
+
+
+

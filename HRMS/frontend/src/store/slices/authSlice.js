@@ -1,8 +1,15 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import authService from '../../services/authService'
 
-// Get user from localStorage
-const user = JSON.parse(localStorage.getItem('user'))
+// Get user from localStorage (safely)
+let user = null
+try {
+  const rawUser = localStorage.getItem('user')
+  user = rawUser ? JSON.parse(rawUser) : null
+} catch (_) {
+  localStorage.removeItem('user')
+  user = null
+}
 const token = localStorage.getItem('token')
 
 const initialState = {
@@ -122,6 +129,20 @@ export const forgotPassword = createAsyncThunk(
   async (email, thunkAPI) => {
     try {
       const response = await authService.forgotPassword(email)
+      return response.data
+    } catch (error) {
+      const message = error.response?.data?.message || error.message || 'Password reset failed'
+      return thunkAPI.rejectWithValue(message)
+    }
+  }
+)
+
+// Reset password
+export const resetPassword = createAsyncThunk(
+  'auth/resetPassword',
+  async ({ token, password }, thunkAPI) => {
+    try {
+      const response = await authService.resetPassword(token, password)
       return response.data
     } catch (error) {
       const message = error.response?.data?.message || error.message || 'Password reset failed'
@@ -257,8 +278,25 @@ export const authSlice = createSlice({
         state.isError = true
         state.message = action.payload
       })
+      // Reset Password
+      .addCase(resetPassword.pending, (state) => {
+        state.isLoading = true
+        state.isError = false
+        state.message = ''
+      })
+      .addCase(resetPassword.fulfilled, (state) => {
+        state.isLoading = false
+        state.isSuccess = true
+        state.message = 'Password has been reset successfully'
+      })
+      .addCase(resetPassword.rejected, (state, action) => {
+        state.isLoading = false
+        state.isError = true
+        state.message = action.payload
+      })
   },
 })
 
 export const { reset, clearError } = authSlice.actions
 export default authSlice.reducer
+

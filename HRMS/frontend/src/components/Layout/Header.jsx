@@ -1,6 +1,6 @@
 import React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { toggleSidebar, openModal } from '../../store/slices/uiSlice'
+import { toggleSidebar, openModal, toggleTheme } from '../../store/slices/uiSlice'
 import { logout } from '../../store/slices/authSlice'
 import styled from 'styled-components'
 import { 
@@ -215,8 +215,11 @@ const Header = () => {
   }
 
   const handleToggleTheme = () => {
-    // Theme toggle functionality will be implemented
-    console.log('Toggle theme')
+    dispatch(toggleTheme())
+    try {
+      const nextTheme = theme === 'dark' ? 'light' : 'dark'
+      document.documentElement.setAttribute('data-theme', nextTheme)
+    } catch (_) {}
   }
 
   return (
@@ -270,3 +273,9 @@ const Header = () => {
 }
 
 export default Header
+
+
+
+
+
+

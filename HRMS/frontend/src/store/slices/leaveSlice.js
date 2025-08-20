@@ -47,3 +47,9 @@ export const leaveSlice = createSlice({
 
 export const { reset, setLeaves, setLeaveTypes, setLeaveBalance, setCurrentLeave, addLeave, updateLeave } = leaveSlice.actions
 export default leaveSlice.reducer
+
+
+
+
+
+

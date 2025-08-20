@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { NavLink, useLocation } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
 import { toggleSidebar } from '../../store/slices/uiSlice'
@@ -9,10 +9,11 @@ import {
   FiClock, 
   FiCalendar, 
   FiDollarSign, 
-  FiBuilding, 
+  FiBriefcase, 
   FiSettings, 
   FiUser,
-  FiMenu,
+  FiChevronDown,
+  FiChevronRight,
   FiX
 } from 'react-icons/fi'
 
@@ -25,13 +26,13 @@ const SidebarContainer = styled.aside`
   background: linear-gradient(135deg, var(--primary-800) 0%, var(--primary-900) 100%);
   color: white;
   z-index: var(--z-fixed);
-  transform: translateX(${props => props.isOpen ? '0' : '-100%'});
+  transform: translateX(${props => props.$isOpen ? '0' : '-100%'});
   transition: transform var(--transition-normal);
   box-shadow: var(--shadow-xl);
   
   @media (max-width: 768px) {
     width: 100%;
-    transform: translateX(${props => props.isOpen ? '0' : '-100%'});
+    transform: translateX(${props => props.$isOpen ? '0' : '-100%'});
   }
 `
 
@@ -151,6 +152,45 @@ const NavLinkStyled = styled(NavLink)`
   }
 `
 
+const GroupHeader = styled.button`
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-3);
+  padding: var(--spacing-3) var(--spacing-6);
+  color: rgba(255, 255, 255, 0.9);
+  background: transparent;
+  border: none;
+  text-align: left;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  border-left: 3px solid transparent;
+  
+  &:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+  }
+
+  .left {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-3);
+  }
+`
+
+const SubMenu = styled.ul`
+  list-style: none;
+  margin: 0;
+  padding: 0 0 0 calc(var(--spacing-6) + 12px);
+  
+  li a {
+    padding-top: 10px;
+    padding-bottom: 10px;
+    font-size: var(--font-size-sm);
+    opacity: 0.9;
+  }
+`
+
 const UserSection = styled.div`
   padding: var(--spacing-6);
   border-top: 1px solid rgba(255, 255, 255, 0.1);
@@ -199,30 +239,75 @@ const Sidebar = () => {
   const { user } = useSelector((state) => state.auth)
   const location = useLocation()
 
+  const [openGroups, setOpenGroups] = useState({})
+
   const navigationItems = [
     {
-      title: 'Main',
-      items: [
-        { path: '/dashboard', icon: FiHome, text: 'Dashboard' },
-        { path: '/profile', icon: FiUser, text: 'Profile' },
-      ]
+      title: 'Main Menu',
+      groups: [
+        {
+          key: 'dashboard',
+          icon: FiHome,
+          text: 'Dashboard',
+          children: [
+            { path: '/dashboard', text: 'Super Admin' },
+            { path: '/dashboard', text: 'Admin' },
+            { path: '/dashboard', text: 'Employee' },
+          ],
+        },
+        {
+          key: 'organization',
+          icon: FiBriefcase,
+          text: 'Organization',
+          roles: ['admin', 'super_admin'],
+          children: [
+            { path: '/company', text: 'Company Details' },
+          ],
+        },
+        {
+          key: 'users',
+          icon: FiUsers,
+          text: 'Users',
+          roles: ['admin', 'super_admin', 'manager'],
+          children: [
+            { path: '/register', text: 'Add User', roles: ['super_admin'] },
+            { path: '/employees', text: 'Users' },
+          ],
+        },
+        {
+          key: 'attendance',
+          icon: FiClock,
+          text: 'Attendance',
+          children: [
+            { path: '/attendance', text: 'My Attendance' },
+          ],
+        },
+        {
+          key: 'leave',
+          icon: FiCalendar,
+          text: 'Leaves',
+          children: [
+            { path: '/leave', text: 'Leave Management' },
+          ],
+        },
+        {
+          key: 'payroll',
+          icon: FiDollarSign,
+          text: 'Payroll',
+          children: [
+            { path: '/payroll', text: 'Payroll' },
+          ],
+        },
+        {
+          key: 'settings',
+          icon: FiSettings,
+          text: 'Settings',
+          children: [
+            { path: '/settings', text: 'System Settings' },
+          ],
+        },
+      ],
     },
-    {
-      title: 'Management',
-      items: [
-        { path: '/employees', icon: FiUsers, text: 'Employees', roles: ['admin', 'super_admin', 'manager'] },
-        { path: '/attendance', icon: FiClock, text: 'Attendance' },
-        { path: '/leave', icon: FiCalendar, text: 'Leave Management' },
-        { path: '/payroll', icon: FiDollarSign, text: 'Payroll' },
-      ]
-    },
-    {
-      title: 'Organization',
-      items: [
-        { path: '/company', icon: FiBuilding, text: 'Company', roles: ['admin', 'super_admin'] },
-        { path: '/settings', icon: FiSettings, text: 'Settings' },
-      ]
-    }
   ]
 
   const canAccessItem = (item) => {
@@ -230,16 +315,20 @@ const Sidebar = () => {
     return user && item.roles.includes(user.role)
   }
 
+  const toggleGroup = (key) => {
+    setOpenGroups((prev) => ({ ...prev, [key]: !prev[key] }))
+  }
+
   const handleCloseSidebar = () => {
     dispatch(toggleSidebar())
   }
 
   return (
-    <SidebarContainer isOpen={sidebarOpen}>
+    <SidebarContainer $isOpen={sidebarOpen}>
       <SidebarHeader>
         <Logo>
           <div className="logo-icon">
-            <FiBuilding />
+            <FiBriefcase />
           </div>
           <h1>HRMS</h1>
         </Logo>
@@ -253,22 +342,35 @@ const Sidebar = () => {
           <NavSection key={section.title}>
             <SectionTitle>{section.title}</SectionTitle>
             <NavList>
-              {section.items
-                .filter(canAccessItem)
-                .map((item) => {
-                  const Icon = item.icon
-                  return (
-                    <NavItem key={item.path}>
-                      <NavLinkStyled 
-                        to={item.path}
-                        className={location.pathname === item.path ? 'active' : ''}
-                      >
+              {section.groups.map((group) => {
+                if (!canAccessItem(group)) return null
+                const Icon = group.icon
+                const isOpen = !!openGroups[group.key]
+                return (
+                  <NavItem key={group.key}>
+                    <GroupHeader onClick={() => toggleGroup(group.key)} aria-expanded={isOpen}>
+                      <div className="left">
                         <Icon className="nav-icon" />
-                        <span className="nav-text">{item.text}</span>
-                      </NavLinkStyled>
-                    </NavItem>
-                  )
-                })}
+                        <span className="nav-text">{group.text}</span>
+                      </div>
+                      {isOpen ? <FiChevronDown /> : <FiChevronRight />}
+                    </GroupHeader>
+                    {isOpen && (
+                      <SubMenu>
+                        {group.children
+                          .filter(canAccessItem)
+                          .map((child) => (
+                            <li key={child.text}>
+                              <NavLinkStyled to={child.path} className={location.pathname === child.path ? 'active' : ''} onClick={handleCloseSidebar}>
+                                <span className="nav-text">{child.text}</span>
+                              </NavLinkStyled>
+                            </li>
+                          ))}
+                      </SubMenu>
+                    )}
+                  </NavItem>
+                )
+              })}
             </NavList>
           </NavSection>
         ))}
@@ -290,3 +392,4 @@ const Sidebar = () => {
 }
 
 export default Sidebar
+

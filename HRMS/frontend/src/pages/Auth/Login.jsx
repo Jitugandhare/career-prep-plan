@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
-import { useForm } from 'react-hook-form'
-import { login, reset } from '../../store/slices/authSlice'
 import styled from 'styled-components'
-import { FiMail, FiLock, FiEye, FiEyeOff, FiBuilding } from 'react-icons/fi'
+import { FiMail, FiLock, FiEye, FiEyeOff, FiBriefcase } from 'react-icons/fi'
+import { login, reset } from '../../store/slices/authSlice'
 
 const LoginContainer = styled.div`
   min-height: 100vh;
@@ -211,25 +210,22 @@ const Login = () => {
   const dispatch = useDispatch()
   const navigate = useNavigate()
   const { isLoading, isSuccess, isError, message } = useSelector((state) => state.auth)
-  
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm()
+
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
 
   useEffect(() => {
     if (isSuccess) {
       navigate('/dashboard')
     }
-    
     return () => {
       dispatch(reset())
     }
   }, [isSuccess, navigate, dispatch])
 
-  const onSubmit = (data) => {
-    dispatch(login(data))
+  const onSubmit = (e) => {
+    e.preventDefault()
+    dispatch(login({ email, password }))
   }
 
   const togglePasswordVisibility = () => {
@@ -241,14 +237,14 @@ const Login = () => {
       <LoginCard>
         <Logo>
           <div className="logo-icon">
-            <FiBuilding />
+            <FiBriefcase />
           </div>
           <h1>HRMS</h1>
         </Logo>
-        
+
         <WelcomeText>Welcome back! Please sign in to your account.</WelcomeText>
-        
-        <Form onSubmit={handleSubmit(onSubmit)}>
+
+        <Form onSubmit={onSubmit}>
           <FormGroup>
             <Label htmlFor="email">Email Address</Label>
             <InputContainer>
@@ -259,17 +255,10 @@ const Login = () => {
                 id="email"
                 type="email"
                 placeholder="Enter your email"
-                className={errors.email ? 'error' : ''}
-                {...register('email', {
-                  required: 'Email is required',
-                  pattern: {
-                    value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                    message: 'Invalid email address'
-                  }
-                })}
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
               />
             </InputContainer>
-            {errors.email && <ErrorMessage>{errors.email.message}</ErrorMessage>}
           </FormGroup>
 
           <FormGroup>
@@ -282,14 +271,8 @@ const Login = () => {
                 id="password"
                 type={showPassword ? 'text' : 'password'}
                 placeholder="Enter your password"
-                className={errors.password ? 'error' : ''}
-                {...register('password', {
-                  required: 'Password is required',
-                  minLength: {
-                    value: 6,
-                    message: 'Password must be at least 6 characters'
-                  }
-                })}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
               />
               <PasswordToggle
                 type="button"
@@ -299,8 +282,9 @@ const Login = () => {
                 {showPassword ? <FiEyeOff /> : <FiEye />}
               </PasswordToggle>
             </InputContainer>
-            {errors.password && <ErrorMessage>{errors.password.message}</ErrorMessage>}
           </FormGroup>
+
+          {isError && <ErrorMessage style={{ textAlign: 'center' }}>{message}</ErrorMessage>}
 
           <ForgotPasswordLink to="/forgot-password">
             Forgot your password?
@@ -311,20 +295,12 @@ const Login = () => {
           </SubmitButton>
         </Form>
 
-        {isError && <ErrorMessage style={{ textAlign: 'center', marginTop: '1rem' }}>
-          {message}
-        </ErrorMessage>}
-
-        <Divider>
-          <span>New to HRMS?</span>
-        </Divider>
-
-        <RegisterLink to="/register">
-          Don't have an account? <strong>Sign up</strong>
-        </RegisterLink>
+        {/* Registration is restricted to Super Admins within the app. Public sign-up is disabled. */}
       </LoginCard>
     </LoginContainer>
   )
 }
 
 export default Login
+
+

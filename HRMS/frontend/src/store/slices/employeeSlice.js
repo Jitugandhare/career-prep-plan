@@ -42,3 +42,9 @@ export const employeeSlice = createSlice({
 
 export const { reset, setEmployees, setCurrentEmployee, addEmployee, updateEmployee, removeEmployee } = employeeSlice.actions
 export default employeeSlice.reducer
+
+
+
+
+
+

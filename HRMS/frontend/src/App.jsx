@@ -41,6 +41,7 @@ const ProtectedRoute = ({ children, allowedRoles = [] }) => {
 function App() {
   const dispatch = useDispatch()
   const { isAuthenticated, isLoading, user } = useSelector((state) => state.auth)
+  const { isSuccess, isError, message } = useSelector((state) => state.auth)
   const { isLoading: companyLoading } = useSelector((state) => state.company)
 
   useEffect(() => {
@@ -52,17 +53,13 @@ function App() {
   }, [dispatch, isAuthenticated, user])
 
   useEffect(() => {
-    // Show success/error messages from Redux state
-    const { isSuccess, isError, message } = useSelector((state) => state.auth)
-    
     if (isSuccess && message) {
       toast.success(message)
     }
-    
     if (isError && message) {
       toast.error(message)
     }
-  }, [])
+  }, [isSuccess, isError, message])
 
   // Show loading spinner while checking authentication
   if (isLoading || companyLoading) {
@@ -77,7 +74,11 @@ function App() {
           isAuthenticated ? <Navigate to="/dashboard" replace /> : <Login />
         } />
         <Route path="/register" element={
-          isAuthenticated ? <Navigate to="/dashboard" replace /> : <Register />
+          !isAuthenticated ? (
+            <Navigate to="/login" replace />
+          ) : (
+            user?.role === 'super_admin' ? <Register /> : <Navigate to="/dashboard" replace />
+          )
         } />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password/:token" element={<ResetPassword />} />
@@ -115,3 +116,5 @@ function App() {
 }
 
 export default App
+
+
